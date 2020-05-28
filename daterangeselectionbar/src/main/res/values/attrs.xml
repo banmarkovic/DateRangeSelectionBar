@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DateRangeSelectionBar">
+        <attr name="drsUnderlineColor" format="color"/>
+        <attr name="drsVerticalPadding" format="dimension" />
+        <attr name="drsTextColor" format="reference"/>
+        <attr name="drsTextSize" format="dimension"/>
+    </declare-styleable>
+</resources>

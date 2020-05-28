@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/etIDPText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/drs_item_date_period_vertical_padding"
+        android:paddingBottom="@dimen/drs_item_date_period_vertical_padding"
+        android:paddingStart="@dimen/drs_item_date_period_horizontal_padding"
+        android:paddingEnd="@dimen/drs_item_date_period_horizontal_padding"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textColor="@color/colorStandardText"
+        android:textSize="@dimen/drs_standard_text_size"
+        android:textAllCaps="true"
+        android:textAlignment="center"
+        android:gravity="center"
+        tools:text="Test"/>
+
+</LinearLayout>

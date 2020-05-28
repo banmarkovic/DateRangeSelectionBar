@@ -1,0 +1,3 @@
+rootProject.name='DateRangeSelectionBarExample'
+include ':app'
+include ':daterangeselectionbar'
