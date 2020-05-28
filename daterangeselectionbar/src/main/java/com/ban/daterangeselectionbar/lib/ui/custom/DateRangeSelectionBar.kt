@@ -41,8 +41,14 @@ class DateRangeSelectionBar @JvmOverloads constructor(context: Context, attribut
     var currentShownTimePeriodType = DRSDatePeriodType.DRSMonthlyType
         private set
 
-    var allowFutureDates = true
     var isCustomList = false
+
+    var allowFutureDates = true
+        set(value) {
+            waitForFirstFutureDatesToLoad = value
+            field = value
+        }
+    private var waitForFirstFutureDatesToLoad = true
 
     private val datePeriodList = mutableListOf<DRSDatePeriod>()
     private val datePeriodsAdapter by lazy {
@@ -146,6 +152,7 @@ class DateRangeSelectionBar @JvmOverloads constructor(context: Context, attribut
                 onSnapPositionChange(0)
             } else if (futureDates && prevSize != 0) {
                 snapHelper.scrollTo(datePeriodList.size - prevSize + 1, false)
+                onSnapPositionChange(datePeriodList.size - prevSize)
             }
         }
     }
@@ -175,8 +182,9 @@ class DateRangeSelectionBar @JvmOverloads constructor(context: Context, attribut
     }
 
     override fun onSnapPositionChange(position: Int) {
-        if (position in 0 until datePeriodList.size) {
+        if (position in 0 until datePeriodList.size && !waitForFirstFutureDatesToLoad) {
             onTimePeriodSelectListener?.onDatePeriodSelected(datePeriodList[position])
         }
+        if (waitForFirstFutureDatesToLoad) waitForFirstFutureDatesToLoad = false
     }
 }
