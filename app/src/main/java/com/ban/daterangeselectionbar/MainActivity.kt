@@ -2,6 +2,7 @@ package com.ban.daterangeselectionbar
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.ban.daterangeselectionbar.lib.model.DRSDatePeriod
@@ -21,8 +22,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        dateRangeSelectionBar.setCurrentShownTimePeriodType(DRSDatePeriodType.DRSWeeklyType)
         dateRangeSelectionBar.onTimePeriodSelectListener = onTimePeriodSelectListener
-        dateRangeSelectionBar.allowFutureDates = true
+        dateRangeSelectionBar.allowFutureDates = false
     }
 
     fun datePeriodTypeSelected(v: View) {

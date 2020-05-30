@@ -1,6 +1,7 @@
 package com.ban.daterangeselectionbar.lib.ui.adapter
 
 import android.content.res.Resources
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View

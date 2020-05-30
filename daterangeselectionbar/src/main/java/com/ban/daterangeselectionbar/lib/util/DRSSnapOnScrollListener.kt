@@ -1,5 +1,6 @@
 package com.ban.daterangeselectionbar.lib.util
 
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 

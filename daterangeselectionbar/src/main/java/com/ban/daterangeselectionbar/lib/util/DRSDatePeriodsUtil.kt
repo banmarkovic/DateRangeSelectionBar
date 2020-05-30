@@ -123,7 +123,7 @@ class DRSDatePeriodsUtil {
             return days
         }
 
-        fun getYears(localeForDateFormat: Locale, pivotDateServerFormat: String?, futureYears: Boolean = false, limit: Int = 5): List<DRSDatePeriod> {
+        fun getYears(localeForDateFormat: Locale, pivotDateServerFormat: String?, futureYears: Boolean = false, limit: Int = 30): List<DRSDatePeriod> {
             val yearDateFormat = SimpleDateFormat(DRS_ONLY_YEAR_DATE_FORMAt, localeForDateFormat)
             val sdf = SimpleDateFormat(DRS_SERVER_DATE_FORMAT, localeForDateFormat)
 

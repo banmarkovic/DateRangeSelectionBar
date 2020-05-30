@@ -49,6 +49,7 @@ class DateRangeSelectionBar @JvmOverloads constructor(context: Context, attribut
             field = value
         }
     private var waitForFirstFutureDatesToLoad = true
+    private var loadNewDatePeriodTypesCalled = false
 
     private val datePeriodList = mutableListOf<DRSDatePeriod>()
     private val datePeriodsAdapter by lazy {
@@ -58,10 +59,17 @@ class DateRangeSelectionBar @JvmOverloads constructor(context: Context, attribut
         )
     }
 
+    // When scrolling to first element in list, we will populate the list with new future dates
+    // in that moment, focused element is changed and we need to return focus to previously focused element
+    // that's why we need to remember last focused element, so we don't trigger onDatePeriodSelected on wrong date period
+    private var pivotStartDateStringWhileScrolling: String? = null
+    private val ignorePivotValue = "-"
+
     private val snapHelper = DRSExpandedSnapHelper()
 
     fun setCurrentShownTimePeriodType(datePeriodType: DRSDatePeriodType, customPeriods: List<DRSDatePeriod>? = null, scrollToStart:Boolean = true) {
         currentShownTimePeriodType = datePeriodType
+        waitForFirstFutureDatesToLoad = allowFutureDates
         setDatePeriodList(customPeriods = customPeriods, scrollToStart = scrollToStart)
     }
 
@@ -106,12 +114,18 @@ class DateRangeSelectionBar @JvmOverloads constructor(context: Context, attribut
             )
         )
         etRVDPRecyclerView.adapter = datePeriodsAdapter
-        setDatePeriodList()
+
+        setDatePeriodList(futureDates = false)
+
         etRVDPRecyclerView.attachSnapHelperWithListener(snapHelper, this)
     }
 
     private fun setDatePeriodList(offset: Int? = null, futureDates: Boolean = false, customPeriods: List<DRSDatePeriod>? = null, scrollToStart:Boolean = true) {
-        if (offset == null) datePeriodList.clear()
+        val datePeriodType = currentShownTimePeriodType
+        if (offset == null) {
+            loadNewDatePeriodTypesCalled = true
+            datePeriodList.clear()
+        }
 
         setLocaleLanguage()
 
@@ -146,13 +160,24 @@ class DateRangeSelectionBar @JvmOverloads constructor(context: Context, attribut
         )
 
         etRVDPRecyclerView.post {
+            if (datePeriodType != currentShownTimePeriodType) return@post
+
             datePeriodsAdapter.notifyDataSetChanged()
+
             if (offset == null && scrollToStart) {
                 snapHelper.scrollTo(0, false)
                 onSnapPositionChange(0)
             } else if (futureDates && prevSize != 0) {
-                snapHelper.scrollTo(datePeriodList.size - prevSize + 1, false)
-                onSnapPositionChange(datePeriodList.size - prevSize)
+                val pivotDateRangePos = datePeriodList.size - prevSize
+                pivotStartDateStringWhileScrolling = datePeriodList[pivotDateRangePos].startDate
+                snapHelper.scrollTo(pivotDateRangePos + 1, false)
+                onSnapPositionChange(pivotDateRangePos)
+
+                if (!loadNewDatePeriodTypesCalled) {
+                    pivotStartDateStringWhileScrolling = ignorePivotValue
+                    snapHelper.scrollTo(pivotDateRangePos + 1, true)
+                }
+                loadNewDatePeriodTypesCalled = false
             }
         }
     }
@@ -182,9 +207,14 @@ class DateRangeSelectionBar @JvmOverloads constructor(context: Context, attribut
     }
 
     override fun onSnapPositionChange(position: Int) {
-        if (position in 0 until datePeriodList.size && !waitForFirstFutureDatesToLoad) {
+        if (position in 0 until datePeriodList.size &&
+            !waitForFirstFutureDatesToLoad &&
+            ((pivotStartDateStringWhileScrolling != null && pivotStartDateStringWhileScrolling == datePeriodList[position].startDate) ||
+                    pivotStartDateStringWhileScrolling == null)) {
             onTimePeriodSelectListener?.onDatePeriodSelected(datePeriodList[position])
+            pivotStartDateStringWhileScrolling = null
         }
         if (waitForFirstFutureDatesToLoad) waitForFirstFutureDatesToLoad = false
+        if (pivotStartDateStringWhileScrolling == ignorePivotValue) pivotStartDateStringWhileScrolling = null
     }
 }
